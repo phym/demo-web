@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/webflow"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+                          
+	<var name="user" class="com.ssm.framework.model.user.User"/>
+	<on-start> 
+	  <set name="conversationScope.registerUser" value="user"></set> 
+	</on-start>
+	<view-state id="register" view="/user/register" model="user">
+		<binder>
+			<binding property="name" required="true"/>
+			<binding property="loginName" required="true"/>
+			<binding property="loginPwd" required="true"/>
+		</binder>
+		<on-entry>
+            <set name="flowScope.user" value="user"/>
+        </on-entry>
+		<transition on="submit" to="realSubmit" bind="true"/>
+	</view-state>
+	<action-state id="realSubmit">
+		<evaluate expression="userService.registerUser(user)" />
+		<transition on="SUCCESS" to="registerSuccess" />
+		<transition on="FAIL" to="registerFail" />
+	</action-state>
+	<end-state id="registerSuccess" view="/user/registerSuccess" />
+	<end-state id="registerFail"  view="/user/registerFail"/>
+	<end-state id="returnToIndex" view="externalRedirect:servletRelative:/index.jsp">
+	</end-state>
+</flow>

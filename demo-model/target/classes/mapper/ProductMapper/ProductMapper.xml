@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssm.framework.dao.product.ProductDao">
+	<!-- 查询所有产品 -->
+	<select id="getProducts" resultType="product">
+		SELECT 
+			ID AS id,
+			DESCRIPTION AS description,
+			PRICE AS price  
+		FROM T_PRODUCT
+	</select>
+	
+	<!-- 根据ID查询一个产品 -->
+	<select id="getProduct" resultType="product" parameterType="int">
+		SELECT 
+			ID AS id,
+			DESCRIPTION AS description,
+			PRICE AS price   
+		FROM T_PRODUCT WHERE ID=#{productId}
+	</select>
+</mapper>

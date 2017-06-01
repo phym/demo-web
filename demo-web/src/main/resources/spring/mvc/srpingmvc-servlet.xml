@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/mvc 
+		http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+		http://www.springframework.org/schema/aop
+                        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+	<!-- 自动扫描且只扫描@Controller -->
+	<context:component-scan base-package="com.ssm.framework.controller">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+	<mvc:interceptors>
+			<!-- 拦截所有请求 -->
+<!-- 		<bean class="com.ssm.framework.interceptor.LoginInterceptor" /> -->
+		<!-- 只拦截指定的请求 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/account/login.htm"/>
+			<bean class="com.ssm.framework.interceptor.LoginInterceptor">
+			</bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<context:component-scan base-package="com.ssm.framework.log.operator" />	
+	<import resource="classpath*:spring/webflow/webflow-config.xml" />
+	<import resource="classpath*:spring/mvc/view-config.xml" />
+</beans>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+                        http://www.springframework.org/schema/tx
+                        http://www.springframework.org/schema/tx/spring-tx-4.0.xsd 
+                        http://www.springframework.org/schema/task 
+                        http://www.springframework.org/schema/task/spring-task-4.0.xsd
+                        http://www.springframework.org/schema/aop
+                        http://www.springframework.org/schema/aop/spring-aop-4.0.xsd"
+	default-lazy-init="true">
+	<!-- 加载配置文件 -->
+	<bean id="propertyConfigurer"
+		class="com.ssm.framework.property.CustomizedPropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:config/database.properties</value>
+				<value>classpath*:config/mobile_message.properties</value>
+				<value>classpath*:config/fdfs_client.properties</value>
+				<value>classpath*:config/shiro.properties</value>
+				<value>classpath*:config/httpclient.properties</value>
+				<value>classpath*:config/ca.properties</value>
+				<value>classpath*:cache.properties</value>
+				<value>classpath*:config/ssm.properties</value>
+				<value>classpath*:config/redis-session.properties</value>
+			</list>
+		</property>
+	</bean>
+	<import resource="classpath*:spring/database-config.xml" />
+	<import resource="classpath*:spring/cache/spring-cache.xml" />
+	<import resource="classpath*:spring/spring-redis.xml" />
+	<import resource="classpath*:spring/spring-session.xml" />
+	<import resource="classpath*:spring/spring-shiro.xml" />
+	<!-- <import resource="classpath*:spring/fast-dfs.xml" /> -->
+	<!-- 定时任务 -->
+	<task:annotation-driven />
+	<!-- 使用annotation 自动注册bean,并检查@Required,@Autowired的属性已被注入 -->
+	<context:component-scan base-package="com.ssm.framework.service">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- proxy-target-class默认"false",更改为"ture"使用CGLib动态代理 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	<context:component-scan base-package="com.ssm.framework.log.service" />
+	<!-- 事务管理器, Jdbc单数据源事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" />
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	<!-- MyBatis配置 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="configLocation" value="classpath:mybatis/mybatis-config.xml" />
+		<property name="dataSource" ref="dataSource" />
+		<!-- 自动扫描entity目录, Mapper文件里面就可以直接写对应的类名 而不用写全路径名了 -->
+		<property name="typeAliasesPackage" value="com.ssm.framework.model" />
+		<!-- 显式指定Mapper文件位置 -->
+		<property name="mapperLocations" value="classpath*:/mapper/**/*Mapper.xml" />
+	</bean>
+	<!-- 扫描basePackage下所有以@MyBatisRepository标识的 接口 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.ssm.framework.dao" />
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+	
+	<bean id="sqlSession"  class="org.mybatis.spring.SqlSessionTemplate">     
+        <constructor-arg index="0" ref="sqlSessionFactory" />     
+    </bean>  
+    <bean id="testBatchDao" class="com.ssm.framework.dao.user.TestBatchDao">
+    	<property name="sqlSessionTemplate" ref="sqlSession"/>
+    </bean>
+	<!-- 配置自定义日志文件 -->
+	<bean class="com.ssm.framework.log.configure.LogbackConfigurer" />
+
+	<!-- <bean class="com.ssm.framework.log.configure.LogService" id="log"/> -->
+	<!-- <aop:config> -->
+	<!-- <aop:aspect id="alog" ref="log"> -->
+	<!-- <aop:pointcut expression="execution(* com.ssm.framework.service.*.*.*(..))" -->
+	<!-- id="logPoint" /> -->
+	<!-- <aop:around method="aroundLogAdvice" pointcut-ref="logPoint" /> -->
+	<!-- <aop:after-throwing method="afterThrowsAdvice" -->
+	<!-- pointcut-ref="logPoint" throwing="ex" /> -->
+	<!-- </aop:aspect> -->
+	<!-- </aop:config> -->
+
+
+	<!-- 配置多级缓存 -->
+	<!-- <bean id="cacheManager" class="com.sxj.cache.manager.HierarchicalCacheManager" -->
+	<!-- lazy-init="false" init-method="initCacheProvider"> -->
+	<!-- <property name="configFile" value="cache.properties"></property> -->
+	<!-- <property name="databaseId" value="2"></property> -->
+	<!-- </bean> -->
+	<!-- <bean id="redisConcurrent" class="com.sxj.redis.advance.RedisConcurrent"> -->
+	<!-- <constructor-arg index="0"> -->
+	<!-- <bean class="com.sxj.redis.advance.Config"> -->
+	<!-- <property name="singleServerConfig"> -->
+	<!-- <bean class="com.sxj.redis.advance.SingleServerConfig"> -->
+	<!-- <property name="address" value="${redis.host}:${redis.port}"></property> -->
+	<!-- <property name="database" value="0"></property> -->
+	<!-- </bean> -->
+	<!-- </property> -->
+	<!-- </bean> -->
+	<!-- </constructor-arg> -->
+	<!-- </bean> -->
+	<!-- <bean id="redisCollections" class="com.sxj.redis.advance.RedisCollections"> -->
+	<!-- <constructor-arg index="0"> -->
+	<!-- <bean class="com.sxj.redis.advance.Config"> -->
+	<!-- <property name="singleServerConfig"> -->
+	<!-- <bean class="com.sxj.redis.advance.SingleServerConfig"> -->
+	<!-- <property name="address" value="${redis.host}:${redis.port}"></property> -->
+	<!-- <property name="database" value="0"></property> -->
+	<!-- </bean> -->
+	<!-- </property> -->
+	<!-- </bean> -->
+	<!-- </constructor-arg> -->
+	<!-- </bean> -->
+	<!-- <bean id="redisTopics" class="com.sxj.redis.advance.topic.RedisTopics"> -->
+	<!-- <constructor-arg index="0"> -->
+	<!-- <bean class="com.sxj.redis.advance.Config"> -->
+	<!-- <property name="singleServerConfig"> -->
+	<!-- <bean class="com.sxj.redis.advance.SingleServerConfig"> -->
+	<!-- <property name="address" value="${redis.host}:${redis.port}"></property> -->
+	<!-- <property name="database" value="0"></property> -->
+	<!-- </bean> -->
+	<!-- </property> -->
+	<!-- </bean> -->
+	<!-- </constructor-arg> -->
+	<!-- </bean> -->
+	<!-- <bean id="httpClient" class="com.sxj.util.common.SxjHttpClientImpl"> -->
+	<!-- <property name="charset" value="${httpclient.charset}" /> -->
+	<!-- <property name="keyStoreType" value="${httpclient.keyStoreType}" /> -->
+	<!-- <property name="keyStorePath" value="${httpclient.keyStorePath}" /> -->
+	<!-- <property name="keyPassword" value="${httpclient.keyPassword}" /> -->
+	<!-- </bean> -->
+</beans>

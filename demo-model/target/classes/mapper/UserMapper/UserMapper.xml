@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户DAO MAPPER -->
+<mapper namespace="com.ssm.framework.dao.user.UserDao">
+	
+	<resultMap type="com.ssm.framework.model.user.User" id="userResultMap">
+		<result property="userNo" column="userNo" jdbcType="VARCHAR"/>
+		<result property="name" column="name" jdbcType="VARCHAR"/>
+		<result property="loginName" column="loginName" jdbcType="VARCHAR"/>
+		<result property="loginPwd" column="loginPwd" jdbcType="VARCHAR"/>
+		<result property="sex" column="sex" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+		<result property="age" column="age" jdbcType="INTEGER"/>
+		<result property="registerTime" column="registerTime"/>
+		<result property="modifyTime" column="modifyTime" />
+		<result property="isValid" column="isValid" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler" />
+		<result property="status" column="status" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+	</resultMap>
+	<!-- 查询用信息 -->
+	<select id="login" parameterType="User" resultMap="userResultMap">
+		SELECT 
+			USER_NO as userNo,
+			NAME AS name, 
+			LOGIN_NAME AS loginName,
+			LOGIN_PWD AS loginPwd,
+			SEX AS sex, 
+			AGE AS age, 
+			REGISTER_TIME AS registerTime,
+			MODIFY_TIME AS modifyTime,
+			IS_VALID AS isValid,
+			STATUS AS status
+		 FROM 
+		 T_USER WHERE LOGIN_NAME=#{loginName} and LOGIN_PWD=#{loginPwd}
+	</select>
+	
+	<!-- 根据登录名，获取用户信息 -->
+	<select id="queryUserByLoginName" parameterType="java.lang.String" resultMap="userResultMap">
+		SELECT 
+			USER_NO as userNo,
+			NAME AS name, 
+			LOGIN_NAME AS loginName,
+			LOGIN_PWD AS loginPwd,
+			SEX AS sex, 
+			AGE AS age, 
+			REGISTER_TIME AS registerTime,
+			MODIFY_TIME AS modifyTime,
+			IS_VALID AS isValid,
+			STATUS AS status
+		 FROM 
+		 T_USER WHERE LOGIN_NAME=#{loginName} limit 1
+	</select>
+	
+	<!-- 新增用户 -->
+	<insert id="addUser" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO  T_USER ( 
+			USER_NO,
+			NAME, 
+			LOGIN_NAME,
+			LOGIN_PWD,
+			SEX, 
+			AGE, 
+			REGISTER_TIME)
+			values(
+				#{userNo},#{name},#{loginName},#{loginPwd},#{sex},${age},now()
+			)
+	</insert>
+</mapper>

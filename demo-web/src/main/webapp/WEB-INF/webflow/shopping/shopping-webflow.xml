@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/webflow"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+                          http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+                          
+	<var name="mycart" class="com.ssm.framework.model.cart.Cart"/>
+	<on-start> 
+	  <set name="conversationScope.cart" value="mycart"></set> 
+	</on-start>
+	<view-state id="viewCart" view="/shopping/viewCart">
+		<on-render>
+			<evaluate expression="productService.getProducts()" result="viewScope.products" />
+		</on-render>
+		<transition on="addToCart" to="addProductToCart"/>
+		<transition on="submit" to="viewOrder" />
+	</view-state>
+	<subflow-state id="addProductToCart" subflow="addToCart"> 
+	  <transition on="productAdded" to="viewCart" /> 
+	</subflow-state>
+	<view-state id="viewOrder" view="/shopping/viewOrder">
+		<transition on="confirm" to="orderConfirmed">
+		</transition>
+	</view-state>
+	<view-state id="orderConfirmed" view="/shopping/orderConfirmed">
+		<transition on="returnToIndex" to="returnToIndex">
+		</transition>
+	</view-state>
+	<end-state id="returnToIndex" view="externalRedirect:servletRelative:/index.jsp">
+	</end-state>
+</flow>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<#include "base.html">
+<script type="text/javascript">
+	$(document).ready(function(){
+		$(".i-checks").iCheck({checkboxClass:"icheckbox_square-green",radioClass:"iradio_square-green",});
+		$("#registerFrm").validate({
+			submitHandler:function(form){  
+// 				$.post("${ctx}/register.htm",$("#registerFrm").serialize(),function(data){
+// 					alert(data);
+// 				});
+				form.submit();
+	        },
+		    rules: {
+		      name: {
+		        required: true,
+		        minlength: 2
+		      },
+		      loginName:{
+		    	  required: true,
+		          maxlength: 20
+		      },
+		      loginPwd: {
+		        required: true,
+		        minlength: 6
+		      },
+		      conLoginPwd: {
+		        required: true,
+		        minlength: 6,
+		        equalTo: "#loginPwd"
+		      }
+		    },
+		    messages: {
+		      name: {
+		        required: "请输入昵称",
+		        minlength: "昵称必需由两个字母组成"
+		      },
+		      loginName:{
+		    	  required: "请输入账号",
+		          maxlength: "账号长度不能大于20"
+		      },
+		      loginPwd: {
+		        required: "请输入密码",
+		        minlength: "密码长度不能小于 6 个字母"
+		      },
+		      conLoginPwd: {
+		        required: "请输入密码",
+		        minlength: "密码长度不能小于 6 个字母",
+		        equalTo: "两次密码输入不一致"
+		      }
+		    }
+		});
+	});
+</script>
+</head>
+<body class="gray-bg">
+    <div class="middle-box text-center loginscreen   animated fadeInDown" ng-controller="registerCtrl" ng-app="registerApp" ng-submit="register()">
+        <div>
+            <h3>欢迎注册 Demo-web</h3>
+            <form class="m-t" role="form" name="registerFrm" id="registerFrm">
+            	<div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入昵称" required="" ng-model="user.name" maxlength="20" name="name">
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入账号" required="" ng-model="user.loginName" name="loginName">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="请输入密码" required="" ng-model="user.loginPwd" name="loginPwd" id="loginPwd">
+                </div>
+                <div class="form-group">
+                    <input type="password" class="form-control" placeholder="请再次输入密码" required="" ng-model="user.conLoginPwd" name="conLoginPwd">
+                </div>
+                <div class="form-group text-left">
+                    <div class="checkbox i-checks">
+                        <label class="no-padding">
+                            <input type="checkbox"><i></i> 我同意注册协议</label>
+                    </div>
+                </div>
+                <input type="hidden" name="execution" value="${flowExecutionKey}" />
+            	<input type="hidden" name="_eventId" value="submit" />
+                <button type="submit" class="btn btn-primary block full-width m-b">注 册</button>
+                <p class="text-muted text-center"><small>已经有账户了？</small><a href="index.html">点此登录</a>
+                </p>
+            </form>
+        </div>
+    </div>
+    <script>
+	    var app = angular.module('registerApp', []);
+		app.controller('registerCtrl', function($scope,$http) {
+		    $scope.user = {};
+// 		    $scope.register=function(){
+		    	
+// 		    }
+		});
+    </script>
+</body>
+</html>

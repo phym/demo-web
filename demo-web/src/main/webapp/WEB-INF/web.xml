@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<display-name>SSM Demo Web Application</display-name>
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>classpath*:spring/applicationContext.xml
+			classpath:spring/international.xml</param-value>
+	</context-param>
+	<servlet>
+		<servlet-name>springmvc</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>classpath:spring/mvc/srpingmvc-servlet.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	<!-- <servlet-mapping> -->
+	<!-- <servlet-name>springmvc</servlet-name> -->
+	<!-- <url-pattern>/shopping/*</url-pattern> -->
+	<!-- </servlet-mapping> -->
+	<session-config>
+		<session-timeout>15</session-timeout>
+	</session-config>
+	<!-- spring-session begin -->
+	<filter>
+		<filter-name>springSessionRepositoryFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>springSessionRepositoryFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	spring-session end
+	<!-- shiro begin -->
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<!-- shiro end -->
+	<!-- 连接池 启用 Web 监控统计功能 start 可以通过web浏览duid状况 -->
+	<filter>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<filter-class>com.alibaba.druid.support.http.WebStatFilter</filter-class>
+		<init-param>
+			<param-name>exclusions</param-name>
+			<param-value>*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>DruidWebStatFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>DruidStatView</servlet-name>
+		<servlet-class>com.alibaba.druid.support.http.StatViewServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>DruidStatView</servlet-name>
+		<url-pattern>/druid/*</url-pattern>
+	</servlet-mapping>
+	<!-- CAS begin -->
+	<!-- <listener> -->
+	<!-- <listener-class>org.jasig.cas.client.session.SingleSignOutHttpSessionListener</listener-class> -->
+	<!-- </listener> -->
+	<!-- <filter> -->
+	<!-- <filter-name>CAS Single Sign Out Filter</filter-name> -->
+	<!-- <filter-class>org.jasig.cas.client.session.SingleSignOutFilter</filter-class> -->
+	<!-- <init-param> -->
+	<!-- <param-name>casServerUrlPrefix</param-name> -->
+	<!-- <param-value>https://www.cas.com:8443/cas-server-webapp</param-value> -->
+	<!-- </init-param> -->
+	<!-- </filter> -->
+	<!-- <filter-mapping> -->
+	<!-- <filter-name>CAS Single Sign Out Filter</filter-name> -->
+	<!-- <url-pattern>/*</url-pattern> -->
+	<!-- </filter-mapping> -->
+	<!-- <filter> -->
+	<!-- <filter-name>CAS Authentication Filter</filter-name> -->
+	<!-- <filter-class>org.jasig.cas.client.authentication.AuthenticationFilter</filter-class> -->
+	<!-- <init-param> -->
+	<!-- <param-name>casServerLoginUrl</param-name> -->
+	<!-- <param-value>https://www.cas.com:8443/cas-server-webapp/login</param-value> -->
+	<!-- </init-param> -->
+	<!-- <init-param> -->
+	<!-- <param-name>serverName</param-name> -->
+	<!-- <param-value>http://www.ssoclient.com:8080</param-value> -->
+	<!-- </init-param> -->
+	<!-- </filter> -->
+	<!-- <filter-mapping> -->
+	<!-- <filter-name>CAS Authentication Filter</filter-name> -->
+	<!-- <url-pattern>/*</url-pattern> -->
+	<!-- </filter-mapping> -->
+	<!-- <filter> -->
+	<!-- <filter-name>CAS Validation Filter</filter-name> -->
+	<!-- <filter-class>org.jasig.cas.client.validation.Cas20ProxyReceivingTicketValidationFilter</filter-class> -->
+	<!-- <init-param> -->
+	<!-- <param-name>casServerUrlPrefix</param-name> -->
+	<!-- <param-value>https://www.cas.com:8443/cas-server-webapp</param-value> -->
+	<!-- </init-param> -->
+	<!-- <init-param> -->
+	<!-- <param-name>serverName</param-name> -->
+	<!-- <param-value>http://www.ssoclient.com:8080</param-value> -->
+	<!-- </init-param> -->
+	<!-- </filter> -->
+	<!-- <filter-mapping> -->
+	<!-- <filter-name>CAS Validation Filter</filter-name> -->
+	<!-- <url-pattern>/*</url-pattern> -->
+	<!-- </filter-mapping> -->
+	<!-- <filter> -->
+	<!-- <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name> -->
+	<!-- <filter-class>org.jasig.cas.client.util.HttpServletRequestWrapperFilter</filter-class> -->
+	<!-- </filter> -->
+	<!-- <filter-mapping> -->
+	<!-- <filter-name>CAS HttpServletRequest Wrapper Filter</filter-name> -->
+	<!-- <url-pattern>/*</url-pattern> -->
+	<!-- </filter-mapping> -->
+	<!-- CAS end -->
+	<!-- 连接池 启用 Web 监控统计功能 end -->
+	<!-- 前端缓存优化 jsp、js、imagestart -->
+	<filter>
+		<filter-name>GZIPFilter</filter-name>
+		<filter-class>com.tacitknowledge.filters.gzipfilter.GZIPFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>CacheFilter</filter-name>
+		<filter-class>com.tacitknowledge.filters.cache.CacheHeaderFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>GZIPFilter</filter-name>
+		<url-pattern>*.js</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheFilter</filter-name>
+		<url-pattern>*.html</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheFilter</filter-name>
+		<url-pattern>*.gif</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheFilter</filter-name>
+		<url-pattern>*.jpg</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheFilter</filter-name>
+		<url-pattern>*.png</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>CacheFilter</filter-name>
+		<url-pattern>*.css</url-pattern>
+	</filter-mapping>
+	<!-- 前端缓存优化 end -->
+	<filter>
+		<filter-name>charset</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>charset</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<welcome-file-list>
+		<welcome-file>/index.html</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>404</error-code>
+		<location>/404.html</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/500.html</location>
+	</error-page>
+	<mime-mapping>
+		<extension>ico</extension>
+		<mime-type>image/x-icon</mime-type>
+	</mime-mapping>
+</web-app>
